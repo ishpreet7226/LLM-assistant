@@ -5,7 +5,7 @@ from pathlib import Path
 class Settings(BaseSettings):
     # Ollama
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "llama3.3"
+    OLLAMA_MODEL: str = "llama3.2:3b"
     OLLAMA_TIMEOUT: int = 120
 
     # Embeddings
