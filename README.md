@@ -1,6 +1,6 @@
 # RAG Assistant
 
-A production-ready Retrieval-Augmented Generation (RAG) system built with **FastAPI**, **Ollama (Llama 3.3)**, **FAISS**, and **sentence-transformers**.
+A production-ready Retrieval-Augmented Generation (RAG) system built with **FastAPI**, **Ollama**, **FAISS**, and **sentence-transformers**. Works with any Ollama model — pick one that fits your hardware.
 
 ---
 
@@ -24,7 +24,7 @@ FastAPI Backend
          ├── FAISS Vector Store   ← IndexFlatIP (cosine similarity)
          │       └── Persisted to disk (faiss_index.index + .meta)
          │
-         └── Ollama LLM Service   ← Llama 3.3 via HTTP API
+         └── Ollama LLM Service   ← Any Ollama model via HTTP API
                  └── Streaming token generation
 ```
 
@@ -40,11 +40,33 @@ Install from [ollama.com](https://ollama.com):
 # macOS / Linux
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Pull Llama 3.3
-ollama pull llama3.3
-
 # Start Ollama (if not running as a service)
 ollama serve
+```
+
+### 3. Choose & Pull an Ollama Model
+
+> **Pick a model based on your available RAM.** Larger models give better answers but need more memory.
+
+| Model | RAM Required | Speed | Quality | Pull Command |
+|---|---|---|---|---|
+| `tinyllama` | ~1 GB | ⚡ Very Fast | Basic | `ollama pull tinyllama` |
+| `llama3.2:1b` | ~2 GB | ⚡ Very Fast | Good | `ollama pull llama3.2:1b` |
+| `llama3.2:3b` | ~4 GB | 🚀 Fast | Very Good | `ollama pull llama3.2:3b` |
+| `mistral` | ~5 GB | 🚀 Fast | Very Good | `ollama pull mistral` |
+| `llama3.1:8b` | ~8 GB | 🟡 Moderate | Great | `ollama pull llama3.1:8b` |
+| `llama3.3` | ~16 GB | 🔴 Slow on CPU | Best | `ollama pull llama3.3` |
+| `mixtral` | ~26 GB | 🔴 Slow on CPU | Best | `ollama pull mixtral` |
+
+**Recommendations:**
+- 💻 **4 GB RAM or less** → `llama3.2:1b` or `tinyllama`
+- 💻 **8 GB RAM (MacBook Air / M-series)** → `llama3.2:3b` ✅ *(default)*
+- 🖥️ **16 GB RAM** → `llama3.1:8b` or `mistral`
+- 🖥️ **32 GB+ RAM / GPU** → `llama3.3` or `mixtral`
+
+After pulling your chosen model, set it in `.env`:
+```bash
+OLLAMA_MODEL=llama3.2:3b   # replace with your chosen model
 ```
 
 ---
@@ -61,9 +83,6 @@ source .venv/bin/activate      # Windows: .venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
-
-# Copy env config (optional — defaults are sensible)
-cp .env.example .env
 ```
 
 ---
@@ -128,18 +147,23 @@ Edit `.env` to customise:
 
 | Variable | Default | Description |
 |---|---|---|
-| `OLLAMA_MODEL` | `llama3.3` | Any Ollama model |
+| `OLLAMA_MODEL` | `llama3.2:3b` | Any Ollama model |
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | sentence-transformers model |
 | `CHUNK_SIZE` | `512` | Words per chunk |
 | `CHUNK_OVERLAP` | `64` | Overlapping words between chunks |
 | `TOP_K_RESULTS` | `5` | Retrieved chunks per query |
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
 
-### Using a different model
+### Switching models at any time
 ```bash
+# 1. Pull the new model
 ollama pull mistral
-# Set in .env:
+
+# 2. Update .env
 OLLAMA_MODEL=mistral
+
+# 3. Restart the app
+python run.py
 ```
 
 ### Using a larger embedding model
@@ -184,4 +208,4 @@ rag-assistant/
 
 2. **Retrieval**: User query → embedded → top-K nearest chunks retrieved from FAISS by cosine similarity score.
 
-3. **Generation**: Retrieved chunks injected as context into a structured prompt → streamed through Ollama/Llama 3.3 → tokens sent to the browser via Server-Sent Events.
+3. **Generation**: Retrieved chunks injected as context into a structured prompt → streamed through Ollama → tokens sent to the browser via Server-Sent Events.
