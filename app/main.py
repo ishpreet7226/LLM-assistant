@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="RAG Assistant API",
-    description="Retrieval-Augmented Generation system with Llama 3.3 and FAISS",
+    description="Retrieval-Augmented Generation system with Ollama and FAISS",
     version="1.0.0",
     lifespan=lifespan,
 )
