@@ -568,7 +568,7 @@
     <div class="logo-icon">▣</div>
     <div>
       <div class="logo-text">RAG Assistant</div>
-      <div class="logo-sub">Llama 3.3 · FAISS · Ollama</div>
+      <div class="logo-sub" id="logo-sub">FAISS · Ollama</div>
     </div>
   </div>
   <div class="status-bar">
@@ -649,6 +649,7 @@ const API = '';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let isStreaming = false;
+let currentModel = 'assistant';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function toast(msg, type = 'ok') {
@@ -692,7 +693,9 @@ async function loadStats() {
       ollamaLabel.textContent = 'ollama offline';
     }
 
-    document.getElementById('model-hint').textContent = `model: ${data.llm_model}`;
+    currentModel = data.llm_model || 'assistant';
+    document.getElementById('model-hint').textContent = `model: ${currentModel}`;
+    document.getElementById('logo-sub').textContent = `${currentModel} · FAISS · Ollama`;
   } catch {}
 }
 
@@ -815,7 +818,7 @@ function createAssistantMsg() {
   msg.innerHTML = `
     <div class="msg-avatar">ai</div>
     <div class="msg-body">
-      <div class="msg-role">Assistant · llama3.3</div>
+      <div class="msg-role">Assistant · ${currentModel}</div>
       <div class="msg-text" id="streaming-text"><span class="cursor"></span></div>
     </div>`;
   chatMessages.appendChild(msg);
