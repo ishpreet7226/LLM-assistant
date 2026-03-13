@@ -40,7 +40,11 @@ Install from [ollama.com](https://ollama.com):
 # macOS / Linux
 curl -fsSL https://ollama.com/install.sh | sh
 
-# Start Ollama (if not running as a service)
+# Windows: download the installer from https://ollama.com/download
+```
+
+Then start Ollama (keep this running in the background):
+```bash
 ollama serve
 ```
 
@@ -74,20 +78,27 @@ OLLAMA_MODEL=llama3.2:3b   # replace with your chosen model
 ## Setup
 
 ```bash
-# Clone / enter the project
-cd rag-assistant
+# 1. Clone the repository
+git clone https://github.com/ishpreet7226/LLM-assistant.git
+cd LLM-assistant
 
-# Create virtual environment
+# 2. Create virtual environment
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Create your .env file (configure your chosen model)
+echo "OLLAMA_MODEL=llama3.2:3b" > .env
+# Replace llama3.2:3b with whichever model you pulled in the step above
 ```
 
 ---
 
 ## Run
+
+> ⚠️ Make sure `ollama serve` is running before starting the app.
 
 ```bash
 python run.py
@@ -197,7 +208,7 @@ rag-assistant/
 ├── vector_store/                # FAISS index files (auto-created)
 ├── run.py                       # Entrypoint
 ├── requirements.txt
-└── .env.example
+└── .env                         # Your local config (not committed to git)
 ```
 
 ---
